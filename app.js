@@ -11,7 +11,7 @@ var uiController = (function () {
     // public servece
     getInput: function () {
       return {
-        type: document.querySelector(DOMstrings.inputType).value,
+        type: document.querySelector(DOMstrings.inputType).value, // type n exp or inc gesen yum butsaana
         description: document.querySelector(DOMstrings.inputDescription).value,
         value: document.querySelector(DOMstrings.inputValue).value,
       };
@@ -24,20 +24,22 @@ var uiController = (function () {
 
 // санхүүтэй ажиллах контроллер
 var financeController = (function () {
+  // privet function
   var Income = function (id, description, value) {
     this.id = id;
     this.description = description;
     this.value = value;
   };
 
+  // privet function
   var Expense = function (id, description, value) {
     this.id = id;
     this.description = description;
     this.value = value;
   };
-
+  // privet data
   var data = {
-    allItems: {
+    items: {
       inc: [],
       exp: [],
     },
@@ -45,6 +47,29 @@ var financeController = (function () {
     totals: {
       inc: 0,
       exp: 0,
+    },
+  };
+  //  dotoroo closure tai  public servece nemj ugch bj gadnaas handah bolomjtoi bolno
+  return {
+    addItem: function (type, desc, val) {
+      var item, id;
+
+      // id=identification - todorhoildog hucin zuil davhardaj bolohgui
+      if (data.items[type].length === 0) id = 1;
+      else {
+        id = data.items[type][data.items[type].length - 1].id + 1;
+      }
+
+      if (type === "inc") {
+        item = new Income(id, desc, val);
+      } else {
+        // type === exp
+        item = new Expense(id, desc, val);
+      }
+      data.items[type].push(item);
+    },
+    seedata: function () {
+      return data;
     },
   };
 })();
@@ -55,8 +80,11 @@ var appController = (function (uiController, financeController) {
   var ctrlAddItem = function () {
     // 1. оруулах өгөгдлийг дэлгэцээс олж авна.
 
-    console.log(uiController.getInput());
+    var input = uiController.getInput();
+
     // 2. олж авсан өгөгдлүүдээ санхүүгийн контроллерт дамжуулж тэнд хадгална.
+    financeController.addItem(input.type, input.description, input.value);
+
     // 3. олж авсан өгөгдлүүдээ вэб дээрээ  тохирох хэсэгт нь гаргана.
     // 4. Төсвийг тооцоолно
     // 5. Эцсийн үлдэгдэл, тооцоог дэлэгцэнд гаргана.
